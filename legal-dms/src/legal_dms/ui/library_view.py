@@ -46,7 +46,9 @@ def _list_library() -> list[dict[str, Any]]:
                     "document_id": data.get("document_id"),
                     "original_filename": data.get("original_filename") or sidecar.stem,
                     "metadata": meta,
-                    "ocr_text_path": data.get("ocr_text_path"),
+                    "ocr_text_path": data.get("ocr_text_path"),  # kept for backward compatibility
+                    "ocr_text": data.get("ocr_text"),
+                    "destination_path": data.get("destination_path"),
                 })
     return results
 
@@ -96,7 +98,13 @@ def render_library():
             if meta.get("document_type") not in selected_types:
                 return False
         if selected_year and selected_year != "All":
-            if selected_year not in str(r.get("sidecar")):
+            exec_date = meta.get("execution_date")
+            if exec_date:
+                # exec_date is a string in ISO format, we can extract the year
+                year = exec_date.split("-")[0] if exec_date else ""
+                if selected_year != year:
+                    return False
+            else:
                 return False
         if query:
             q = query.lower()
@@ -122,14 +130,13 @@ def render_library():
         cols[1].write(meta.get("document_type", ""))
         cols[2].write(parties)
         cols[3].write(language)
-        if cols[4].button("open", key=f"open_{item.get('document_id')}"):
-            # attempt to open the original file if it still exists near the sidecar
-            sidecar = item.get("sidecar")
-            orig = sidecar.with_suffix(sidecar.suffix)  # best-effort
-            if item.get("ocr_text_path") and Path(item.get("ocr_text_path")).exists():
-                _open_with_os(item.get("ocr_text_path"))
+        if cols[4].button("View OCR", key=f"open_{item.get('document_id')}"):
+            ocr_text = item.get("ocr_text")
+            if ocr_text:
+                with st.expander("OCR Text", expanded=True):
+                    st.text_area("OCR Text", value=ocr_text, height=300, label_visibility="collapsed")
             else:
-                st.warning("Original file not available to open.")
+                st.warning("OCR text not available for this document.")
 
         # Row click to expand details
         if st.button("Details", key=f"details_{item.get('document_id')}"):
@@ -146,11 +153,10 @@ def render_library():
                     # remove from index and re-add from sidecar OCR text if available
                     with st.spinner("Re-indexing…"):
                         remove_document(item.get("document_id"))
-                        ocr_text_path = item.get("ocr_text_path")
+                        ocr_text = item.get("ocr_text")
                         meta_data = meta
-                        if ocr_text_path and Path(ocr_text_path).exists():
-                            text = Path(ocr_text_path).read_text(encoding="utf-8")
-                            fake_ocr = _make_ocr_result_from_text(text, meta_data.get("primary_language"))
+                        if ocr_text:
+                            fake_ocr = _make_ocr_result_from_text(ocr_text, meta_data.get("primary_language"))
                             try:
                                 # build DocumentMetadata model for indexer
                                 doc_meta = DocumentMetadata(**meta_data)

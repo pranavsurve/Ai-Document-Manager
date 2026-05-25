@@ -202,6 +202,9 @@ class Pipeline:
         ocr_result = extract_text(job.source_path)
         job.artifacts["ocr_result"] = ocr_result.model_dump()
         job.write_artifact(PipelineStage.ocr, "result", ocr_result.model_dump())
+        # Also save plain text OCR result for easier access
+        ocr_text = "\n".join(page.text for page in ocr_result.pages)
+        job.write_artifact(PipelineStage.ocr, "text", ocr_text)
 
     def _stage_classify(self, job: PipelineJob) -> None:
         """Classify the document and extract metadata."""
@@ -248,7 +251,16 @@ class Pipeline:
         from legal_dms.organizer.manager import MovePlan
 
         move_plan = MovePlan(**move_plan_dict)
-        destination, sidecar = execute_move(move_plan, confirmed=True)
+        # Get OCR text from artifact
+        ocr_text = job.read_artifact(PipelineStage.ocr, "text")
+        if ocr_text is None:
+            # Fallback: compute from OCR result
+            ocr_result_dict = job.artifacts.get("ocr_result")
+            if ocr_result_dict:
+                from legal_dms.ocr.engine import OcrResult
+                ocr_result = OcrResult(**ocr_result_dict)
+                ocr_text = "\n".join(page.text for page in ocr_result.pages)
+        destination, sidecar = execute_move(move_plan, confirmed=True, ocr_text=ocr_text)
         job.artifacts["destination_path"] = str(destination)
         job.write_artifact(PipelineStage.execute, "destination", str(destination))
 

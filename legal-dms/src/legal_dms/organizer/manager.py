@@ -95,20 +95,22 @@ def plan_move(source: Path, metadata: DocumentMetadata) -> MovePlan:
     )
 
 
-def execute_move(plan: MovePlan, confirmed: bool) -> tuple[Path, Path]:
+def execute_move(plan: MovePlan, confirmed: bool, ocr_text: str | None = None) -> tuple[Path, Path]:
     if not confirmed:
         raise OrganizerNotConfirmedError("Move must be confirmed before execution.")
 
     plan.destination_path.parent.mkdir(parents=True, exist_ok=True)
     final_destination = Path(shutil.move(str(plan.source_path), str(plan.destination_path)))
 
-    work_text_path = settings.work_path / f"{plan.source_path.stem}.txt"
     sidecar_data = {
         "metadata": plan.metadata.model_dump(mode="json"),
         "document_id": plan.document_id,
         "original_filename": plan.source_path.name,
-        "ocr_text_path": str(work_text_path),
+        "destination_path": str(final_destination),
     }
+    if ocr_text is not None:
+        sidecar_data["ocr_text"] = ocr_text
+
     plan.sidecar_path.parent.mkdir(parents=True, exist_ok=True)
     with plan.sidecar_path.open("w", encoding="utf-8") as sidecar_file:
         json.dump(sidecar_data, sidecar_file, ensure_ascii=False, indent=2)

@@ -7,6 +7,13 @@ from legal_dms.ui.components import sidebar_nav
 from legal_dms.ui.library_view import render_library
 from legal_dms.ui.review_view import render_review
 from legal_dms.ui.chat_view import render_chat
+from legal_dms.watcher.monitor import start_default_observer
+
+
+# Start the file observer once per session
+if "observer_started" not in st.session_state:
+    start_default_observer()
+    st.session_state["observer_started"] = True
 
 
 def main():
