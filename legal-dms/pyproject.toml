@@ -1,0 +1,29 @@
+[project]
+name = "legal-dms"
+version = "0.1.0"
+description = "Local-first legal document management system scaffold with OCR, LLM classification, vector indexing, and a minimalist Streamlit interface."
+readme = "README.md"
+authors = ["Legal DMS <legal-dms@example.com>"]
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic-settings>=2.0",
+    "streamlit>=1.25",
+    "python-dotenv>=1.0",
+    "uv>=0.15",
+    "openai>=1.0",
+    "anthropic>=3.0",
+    "requests>=2.0",
+    "llama-index>=0.9.0",
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    "watchdog>=3.0.0",
+    "PyMuPDF>=1.23.0",
+    "easyocr>=1.6.0"
+]
+
+[build-system]
+requires = ["uv>=0.15"]
+build-backend = "uv.build"
+
+[project.optional-dependencies]
+dev = ["pytest", "reportlab>=3.6"]

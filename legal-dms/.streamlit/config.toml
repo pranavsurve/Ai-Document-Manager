@@ -1,0 +1,12 @@
+[theme]
+base = "light"
+primaryColor = "#2D6CDF"
+backgroundColor = "#FAFAFA"
+secondaryBackgroundColor = "#FAFAFA"
+textColor = "#1A1A1A"
+font = "sans serif"
+
+[menuItems]
+help = ""
+about = ""
+reportError = ""

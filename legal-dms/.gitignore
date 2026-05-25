@@ -1,0 +1,100 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env/
+env.bak/
+venv.bak/
+
+# uv
+# uv.lock is often committed to pin dependencies — remove this line if you want to pin
+uv.lock
+.uv/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment & secrets
+.env
+.env.*
+*.env
+!.env.example
+secrets.toml
+
+# Pytest & coverage
+.pytest_cache/
+.cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+nosetests.xml
+*.cover
+
+# Streamlit secrets (keep config.toml)
+.streamlit/secrets.toml
+
+# ChromaDB data
+chroma_db/
+chroma/
+*.chroma
+chromadb/
+
+# Temp / test data directories
+tmp_*/
+tmp_vector_test*/
+
+# Logs
+*.log
+logs/
+
+# Type checking
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.pytype/
+pyrightconfig.json
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Jupyter (uncomment if using notebooks)
+# .ipynb_checkpoints/
+# *.ipynb
