@@ -2,11 +2,11 @@
 
 import streamlit as st
 
-from .styles import get_base_css
-from .components import sidebar_nav
-from .library_view import render_library
-from .review_view import render_review
-from .chat_view import render_chat
+from legal_dms.ui.styles import get_base_css
+from legal_dms.ui.components import sidebar_nav
+from legal_dms.ui.library_view import render_library
+from legal_dms.ui.review_view import render_review
+from legal_dms.ui.chat_view import render_chat
 
 
 def main():
